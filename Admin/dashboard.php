@@ -1,4 +1,6 @@
 <?php
+session_start(); // <--- INI KUNCI UTAMA YANG TADI HILANG!
+
 require_once __DIR__ . '/../config.php';
 
 // Proteksi Sesi Login (Pastikan Session Aktif)
@@ -8,20 +10,21 @@ if (!isset($_SESSION['login'])) {
 }
 
 // Cek Safety Query Database (Agar tidak error jika tabel belum ada)
-function hitung_total($koneksi, $tabel) {$q = @mysqli_query($koneksi, "SELECT * FROM $tabel");
+function hitung_total($koneksi, $tabel) {
+    $q = @mysqli_query($koneksi, "SELECT * FROM $tabel");
     return $q ? mysqli_num_rows($q) : 0;
 }
 
 // Mengambil data statistik untuk counter
-$total_berita    = hitung_total($koneksi, "berita");
-$total_galeri    = hitung_total($koneksi, "galeri");
-$total_perangkat = hitung_total($koneksi, "perangkat_desa");
-$total_agenda    = hitung_total($koneksi, "agenda");
+$total_berita     = hitung_total($koneksi, "berita");
+$total_galeri     = hitung_total($koneksi, "galeri");
+$total_perangkat  = hitung_total($koneksi, "perangkat_desa");
+$total_agenda     = hitung_total($koneksi, "agenda");
 $total_pengunjung = hitung_total($koneksi, "pengunjung");
 
 // Data dummy 7 hari terakhir untuk Chart.js
 $chart_labels = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
-$chart_data   = [12, 19, 15, 25, 22, 30,$total_pengunjung];
+$chart_data   = [12, 19, 15, 25, 22, 30, $total_pengunjung];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -169,4 +172,9 @@ new Chart(ctx, {
     },
     options: {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: false
+    }
+});
+</script>
+</body>
+</html>

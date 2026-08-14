@@ -1,9 +1,5 @@
 <?php
-// Tampilkan Error untuk debugging
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
+session_start();
 require_once __DIR__ . '/../config.php';
 
 // Proteksi Session Login Admin
@@ -12,7 +8,8 @@ if (!isset($_SESSION['login'])) {
     exit();
 }
 
-$pesan = '';$pesan_error = '';
+$pesan = '';
+$pesan_error = '';$page_title = "Kelola Berita Desa";
 
 // 1. PROSES TAMBAH BERITA
 if (isset($_POST['tambah'])) {
@@ -67,40 +64,51 @@ if (isset($_GET['hapus'])) {
 // Ambil Seluruh Data Berita
 $query_berita = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY id_berita DESC");
 ?>
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Berita Desa - Admin</title>
+    <title><?= $page_title; ?> - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f6f9; }
+    </style>
 </head>
-<body class="bg-light">
+<body>
 
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fa-solid fa-newspaper me-2 text-primary"></i>Kelola Berita Desa</h2>
-        <a href="dashboard.php" class="btn btn-secondary"><i class="fa-solid fa-arrow-left me-1"></i> Kembali ke Dashboard</a>
-    </div>
+<?php 
+// Panggil Sidebar & Topbar Admin
+include 'sidebar.php'; 
+?>
 
     <?php if ($pesan): ?>
-        <div class="alert alert-success alert-dismissible fade show"><?= $pesan; ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-check me-2"></i><?= $pesan; ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     <?php endif; ?>
 
     <?php if ($pesan_error): ?>
-        <div class="alert alert-danger alert-dismissible fade show"><?= $pesan_error; ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i><?= $pesan_error; ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     <?php endif; ?>
 
     <?php if (isset($_GET['pesan']) &&$_GET['pesan'] == 'dihapus'): ?>
-        <div class="alert alert-warning alert-dismissible fade show">Berita berhasil dihapus!<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="fa-solid fa-circle-info me-2"></i>Berita berhasil dihapus!
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     <?php endif; ?>
 
     <div class="row g-4">
         <div class="col-lg-5">
             <div class="card border-0 shadow-sm rounded-4 p-4">
-                <h4 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-pen-to-square me-2"></i>Tambah Berita Baru</h4>
+                <h5 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-pen-to-square me-2"></i>Tambah Berita Baru</h5>
                 <form action="" method="POST" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Judul Berita</label>
@@ -108,7 +116,7 @@ $query_berita = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY id_berita 
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Penulis / Admin</label>
-                        <input type="text" name="penulis" class="form-control" value="<?= $_SESSION['username'] ?? 'Admin Desa'; ?>" required>
+                        <input type="text" name="penulis" class="form-control" value="<?= htmlspecialchars($_SESSION['username'] ?? 'Admin Desa'); ?>" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Gambar Header</label>
@@ -119,12 +127,4 @@ $query_berita = mysqli_query($koneksi, "SELECT * FROM berita ORDER BY id_berita 
                         <textarea name="isi" class="form-control" rows="6" placeholder="Tuliskan isi berita selengkapnya..." required></textarea>
                     </div>
                     <button type="submit" name="tambah" class="btn btn-primary w-100">
-                        <i class="fa-solid fa-paper-plane me-1"></i> Terbitkan Berita
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <div class="col-lg-7">
-            <div class="card border-0 shadow-sm rounded-4 p-4">
-                <h4 class="fw-bold mb-3 text-primary"><i class="fa-solid fa
+                        <i class="fa-solid fa

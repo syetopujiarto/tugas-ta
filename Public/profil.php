@@ -9,7 +9,7 @@ error_reporting(E_ALL);
 $page_title = "Profil Desa";
 require_once __DIR__ . '/header.php';
 // ... kode sisanya
-
+?>
 <?php
 $page_title = "Profil Desa";
 

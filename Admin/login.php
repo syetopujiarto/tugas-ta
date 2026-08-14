@@ -16,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty($username) && !empty($password)) {
         // Prepared Statement untuk mencegah SQL Injection
-        // Mengecek tabel 'admin' (atau 'users' sesuaikan dengan nama tabel di DB kamu)
         $stmt = mysqli_prepare($koneksi, "SELECT id_admin, nama, username, password, level FROM admin WHERE username = ? LIMIT 1");
         
         if ($stmt) {
@@ -28,9 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Verifikasi Password Hash / Plain text
                 if (password_verify($password, $data['password']) || $password === $data['password']) {
                     
-                    // KUNCI UTAMA: Gunakan key session $_SESSION['login'] agar sinkron dengan seluruh halaman admin
                     $_SESSION['login']          = true;
-                    $_SESSION['admin_logged_in'] = true; // Tambahan untuk kompatibilitas
+                    $_SESSION['admin_logged_in'] = true;
                     $_SESSION['admin_id']        = $data['id_admin'];
                     $_SESSION['admin_nama']      = $data['nama'];
                     $_SESSION['username']        = $data['username'];
@@ -63,13 +61,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+            height: 100%;
+        }
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f4f6f9;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 20px 10px;
         }
         .login-card {
             width: 100%;
@@ -77,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border: none;
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s ease-in-out;
         }
         .btn-primary-custom {
             background-color: #4F8EF7;
@@ -95,18 +103,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="text-center mb-4">
         <img src="../assets/img/logo.png" alt="Logo Desa Pilang" height="70" class="mb-2" onerror="this.src='https://via.placeholder.com/70'">
         <h5 class="fw-bold text-dark mb-1">Panel Admin Desa Pilang</h5>
-        <p class="text-muted small">Masukan username dan password untuk login</p>
+        <p class="text-muted small mb-0">Masukan username dan password untuk login</p>
     </div>
 
     <?php if (isset($_GET['msg']) && $_GET['msg'] === 'pls_login'): ?>
-        <div class="alert alert-warning alert-dismissible fade show small" role="alert">
+        <div class="alert alert-warning alert-dismissible fade show small mb-3" role="alert">
             Silakan login terlebih dahulu untuk mengakses admin!
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
 
     <?php if (!empty($error)): ?>
-        <div class="alert alert-danger alert-dismissible fade show small" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show small mb-3" role="alert">
             <?= $error; ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
@@ -116,16 +124,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="mb-3">
             <label class="form-label small fw-bold text-muted">Username</label>
             <div class="input-group">
-                <span class="input-group-text bg-light text-muted"><i class="fas fa-user"></i></span>
-                <input type="text" name="username" class="form-control bg-light" placeholder="Username" required autofocus>
+                <span class="input-group-text bg-light text-muted border-end-0"><i class="fas fa-user"></i></span>
+                <input type="text" name="username" class="form-control bg-light border-start-0" placeholder="Username" required autofocus>
             </div>
         </div>
 
         <div class="mb-4">
             <label class="form-label small fw-bold text-muted">Password</label>
             <div class="input-group">
-                <span class="input-group-text bg-light text-muted"><i class="fas fa-lock"></i></span>
-                <input type="password" name="password" class="form-control bg-light" placeholder="Password" required>
+                <span class="input-group-text bg-light text-muted border-end-0"><i class="fas fa-lock"></i></span>
+                <input type="password" name="password" class="form-control bg-light border-start-0" placeholder="Password" required>
             </div>
         </div>
 
@@ -134,8 +142,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </button>
     </form>
 
-    <div class="text-center text-muted small mt-2">
-        &copy; 2026 Desa Pilang Wonoayu
+    <div class="text-center text-muted small">
+        &copy; <?= date('Y'); ?> Desa Pilang Wonoayu
     </div>
 </div>
 
