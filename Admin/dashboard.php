@@ -1,18 +1,27 @@
 <?php
 require_once __DIR__ . '/../config.php';
-require_once '../Admin/auth.php';
-check_login();
+
+// Proteksi Sesi Login (Pastikan Session Aktif)
+if (!isset($_SESSION['login'])) {
+    header("Location: login.php");
+    exit();
+}
+
+// Cek Safety Query Database (Agar tidak error jika tabel belum ada)
+function hitung_total($koneksi, $tabel) {$q = @mysqli_query($koneksi, "SELECT * FROM $tabel");
+    return $q ? mysqli_num_rows($q) : 0;
+}
 
 // Mengambil data statistik untuk counter
-$total_berita     = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM berita"));
-$total_galeri     = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM galeri"));
-$total_perangkat  = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM perangkat_desa"));
-$total_agenda     = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM agenda"));
-$total_pengunjung = mysqli_num_rows(mysqli_query($koneksi, "SELECT * FROM pengunjung"));
+$total_berita    = hitung_total($koneksi, "berita");
+$total_galeri    = hitung_total($koneksi, "galeri");
+$total_perangkat = hitung_total($koneksi, "perangkat_desa");
+$total_agenda    = hitung_total($koneksi, "agenda");
+$total_pengunjung = hitung_total($koneksi, "pengunjung");
 
-// Data dummy/sample 7 hari terakhir untuk Chart.js
+// Data dummy 7 hari terakhir untuk Chart.js
 $chart_labels = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
-$chart_data   = [12, 19, 15, 25, 22, 30, $total_pengunjung];
+$chart_data   = [12, 19, 15, 25, 22, 30,$total_pengunjung];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -48,15 +57,15 @@ $chart_data   = [12, 19, 15, 25, 22, 30, $total_pengunjung];
         </div>
         <nav>
             <a href="dashboard.php" class="active"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
-            <a href="profil/index.php"><i class="fas fa-id-card me-2"></i> Profil Desa</a>
-            <a href="perangkat/index.php"><i class="fas fa-users me-2"></i> Perangkat Desa</a>
-            <a href="berita/index.php"><i class="fas fa-newspaper me-2"></i> Berita Desa</a>
-            <a href="galeri/index.php"><i class="fas fa-images me-2"></i> Galeri Foto</a>
-            <a href="layanan/index.php"><i class="fas fa-concierge-bell me-2"></i> Layanan Desa</a>
-            <a href="potensi/index.php"><i class="fas fa-seedling me-2"></i> Potensi Desa</a>
-            <a href="fasilitas/index.php"><i class="fas fa-building me-2"></i> Fasilitas</a>
-            <a href="agenda/index.php"><i class="fas fa-calendar-alt me-2"></i> Agenda</a>
-            <a href="kontak/index.php"><i class="fas fa-envelope me-2"></i> Kontak</a>
+            <a href="profil.php"><i class="fas fa-id-card me-2"></i> Profil Desa</a>
+            <a href="perangkat.php"><i class="fas fa-users me-2"></i> Perangkat Desa</a>
+            <a href="berita.php"><i class="fas fa-newspaper me-2"></i> Berita Desa</a>
+            <a href="galeri.php"><i class="fas fa-images me-2"></i> Galeri Foto</a>
+            <a href="layanan.php"><i class="fas fa-concierge-bell me-2"></i> Layanan Desa</a>
+            <a href="karya.php"><i class="fas fa-seedling me-2"></i> Karya Desa</a>
+            <a href="fasilitas.php"><i class="fas fa-building me-2"></i> Fasilitas</a>
+            <a href="agenda.php"><i class="fas fa-calendar-alt me-2"></i> Agenda</a>
+            <a href="kontak.php"><i class="fas fa-envelope me-2"></i> Kontak</a>
         </nav>
     </div>
     <div class="px-3">
@@ -68,8 +77,8 @@ $chart_data   = [12, 19, 15, 25, 22, 30, $total_pengunjung];
     <div class="d-flex justify-content-between align-items-center bg-white p-3 rounded-3 shadow-sm mb-4">
         <h5 class="fw-bold mb-0 text-dark">Dashboard Ringkasan</h5>
         <div class="d-flex align-items-center gap-2">
-            <span class="small text-muted">Selamat datang, <strong><?= $_SESSION['admin_nama']; ?></strong></span>
-            <span class="badge bg-primary rounded-pill"><?= ucfirst($_SESSION['admin_level']); ?></span>
+            <span class="small text-muted">Selamat datang, <strong><?= $_SESSION['username'] ?? 'Admin'; ?></strong></span>
+            <span class="badge bg-primary rounded-pill">Administrator</span>
         </div>
     </div>
 
@@ -161,13 +170,3 @@ new Chart(ctx, {
     options: {
         responsive: true,
         maintainAspectRatio: false,
-        scales: {
-            y: { beginAtZero: true }
-        }
-    }
-});
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>

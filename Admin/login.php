@@ -2,8 +2,8 @@
 session_start();
 require_once __DIR__ . '/../config.php';
 
-// Jika sudah login, redirect ke dashboard
-if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
+// Jika sudah login, redirect langsung ke dashboard
+if (isset($_SESSION['login']) && $_SESSION['login'] === true) {
     header("Location: dashboard.php");
     exit;
 }
@@ -16,27 +16,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty($username) && !empty($password)) {
         // Prepared Statement untuk mencegah SQL Injection
+        // Mengecek tabel 'admin' (atau 'users' sesuaikan dengan nama tabel di DB kamu)
         $stmt = mysqli_prepare($koneksi, "SELECT id_admin, nama, username, password, level FROM admin WHERE username = ? LIMIT 1");
-        mysqli_stmt_bind_param($stmt, "s", $username);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
+        
+        if ($stmt) {
+            mysqli_stmt_bind_param($stmt, "s", $username);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
 
-        if ($data = mysqli_fetch_assoc($result)) {
-            // Verifikasi Password Hash
-            if (password_verify($password, $data['password'])) {
-                $_SESSION['admin_logged_in'] = true;
-                $_SESSION['admin_id']        = $data['id_admin'];
-                $_SESSION['admin_nama']      = $data['nama'];
-                $_SESSION['admin_username']  = $data['username'];
-                $_SESSION['admin_level']     = $data['level'];
+            if ($data = mysqli_fetch_assoc($result)) {
+                // Verifikasi Password Hash / Plain text
+                if (password_verify($password, $data['password']) || $password === $data['password']) {
+                    
+                    // KUNCI UTAMA: Gunakan key session $_SESSION['login'] agar sinkron dengan seluruh halaman admin
+                    $_SESSION['login']          = true;
+                    $_SESSION['admin_logged_in'] = true; // Tambahan untuk kompatibilitas
+                    $_SESSION['admin_id']        = $data['id_admin'];
+                    $_SESSION['admin_nama']      = $data['nama'];
+                    $_SESSION['username']        = $data['username'];
+                    $_SESSION['admin_level']     = $data['level'];
 
-                header("Location: dashboard.php");
-                exit;
+                    header("Location: dashboard.php");
+                    exit;
+                } else {
+                    $error = 'Password yang Anda masukkan salah!';
+                }
             } else {
-                $error = 'Password yang Anda masukkan salah!';
+                $error = 'Username tidak ditemukan!';
             }
         } else {
-            $error = 'Username tidak ditemukan!';
+            $error = 'Terjadi kesalahan pada query database.';
         }
     } else {
         $error = 'Silakan isi username dan password!';
@@ -84,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="card login-card p-4 bg-white">
     <div class="text-center mb-4">
-        <img src="../assets/images/logo.png" alt="Logo Desa Pilang" height="70" class="mb-2" onerror="this.src='https://via.placeholder.com/70'">
+        <img src="../assets/img/logo.png" alt="Logo Desa Pilang" height="70" class="mb-2" onerror="this.src='https://via.placeholder.com/70'">
         <h5 class="fw-bold text-dark mb-1">Panel Admin Desa Pilang</h5>
         <p class="text-muted small">Masukan username dan password untuk login</p>
     </div>

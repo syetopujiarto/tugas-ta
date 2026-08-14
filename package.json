@@ -1,4 +1,9 @@
 {
+  "name": "tugas_ta",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "echo \"Project ini menggunakan PHP. Silakan jalankan Apache di XAMPP dan buka http://localhost/Tugas_TA di browser.\""
+  },
   "dependencies": {
     "mysql2": "^3.23.2"
   }
