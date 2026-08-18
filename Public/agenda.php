@@ -28,26 +28,31 @@ require_once __DIR__ . '/navbar.php';
         <div class="col-lg-9">
             <?php
             $query_agenda = mysqli_query($koneksi, "SELECT * FROM agenda ORDER BY tanggal DESC");
-            if (mysqli_num_rows($query_agenda) > 0):
+            if ($query_agenda && mysqli_num_rows($query_agenda) > 0):
             ?>
                 <div class="timeline">
-                    <?php while ($a = mysqli_fetch_assoc($query_agenda)): ?>
+                    <?php while ($a = mysqli_fetch_assoc($query_agenda)): 
+                        // Penanganan nama kolom dinamis agar aman dari error Undefined array key
+                        $judul     = $a['nama_agenda'] ?? $a['judul_agenda'] ?? $a['judul'] ?? $a['nama'] ?? 'Agenda Desa';
+                        $deskripsi = $a['deskripsi'] ?? $a['keterangan'] ?? $a['isi'] ?? '-';
+                        $lokasi    = $a['lokasi'] ?? $a['tempat'] ?? '-';
+                    ?>
                         <div class="timeline-item">
                             <div class="timeline-icon">
                                 <i class="far fa-calendar-check fs-6"></i>
                             </div>
                             <div class="card border-0 shadow-sm rounded-4 p-4">
                                 <div class="d-flex flex-wrap justify-content-between align-items-center mb-2">
-                                    <h5 class="fw-bold mb-1 text-primary"><?= $a['nama_agenda']; ?></h5>
+                                    <h5 class="fw-bold mb-1 text-primary"><?= $judul; ?></h5>
                                     <span class="badge bg-light text-dark border">
-                                        <i class="far fa-clock me-1 text-primary"></i> <?= date('d M Y', strtotime($a['tanggal'])); ?>
+                                        <i class="far fa-clock me-1 text-primary"></i> <?= !empty($a['tanggal']) ? date('d M Y', strtotime($a['tanggal'])) : '-'; ?>
                                     </span>
                                 </div>
                                 <p class="text-muted small mb-2">
-                                    <i class="fas fa-map-marker-alt text-danger me-1"></i> <strong>Lokasi:</strong> <?= $a['lokasi']; ?>
+                                    <i class="fas fa-map-marker-alt text-danger me-1"></i> <strong>Lokasi:</strong> <?= $lokasi; ?>
                                 </p>
                                 <p class="text-secondary small mb-0 lh-base">
-                                    <?= nl2br($a['deskripsi']); ?>
+                                    <?= nl2br($deskripsi); ?>
                                 </p>
                             </div>
                         </div>
@@ -63,4 +68,4 @@ require_once __DIR__ . '/navbar.php';
     </div>
 </div>
 
-<?php require_once '../Public/footer.php'; ?>
+<?php require_once __DIR__ . '/footer.php'; ?>

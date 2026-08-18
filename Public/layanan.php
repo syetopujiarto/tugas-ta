@@ -28,18 +28,30 @@ require_once __DIR__ . '/navbar.php';
         <div class="col-lg-10">
             <div class="accordion accordion-flush shadow-sm rounded-4 overflow-hidden border" id="accordionLayanan">
                 <?php
+                // Mengecek query ke tabel layanan_desa atau fallback ke tabel layanan
                 $query_layanan = mysqli_query($koneksi, "SELECT * FROM layanan_desa ORDER BY id_layanan ASC");
-                if (mysqli_num_rows($query_layanan) > 0):
+                if (!$query_layanan) {
+                    $query_layanan = mysqli_query($koneksi, "SELECT * FROM layanan");
+                }
+
+                if ($query_layanan && mysqli_num_rows($query_layanan) > 0):
                     $no = 0;
                     while ($l = mysqli_fetch_assoc($query_layanan)):
                         $no++;
-                        $collapse_id = "collapse" . $l['id_layanan'];
-                        $heading_id = "heading" . $l['id_layanan'];
+                        $id_layanan = $l['id_layanan'] ?? $l['id'] ?? $no;
+                        $collapse_id = "collapse" . $id_layanan;
+                        $heading_id = "heading" . $id_layanan;
+
+                        // Penanganan variabel dinamis
+                        $nama_layanan    = $l['nama_layanan'] ?? $l['judul'] ?? $l['nama'] ?? 'Layanan Desa';
+                        $persyaratan     = $l['persyaratan'] ?? $l['syarat'] ?? '-';
+                        $prosedur        = $l['prosedur'] ?? $l['keterangan'] ?? '-';
+                        $waktu_pelayanan = $l['waktu_pelayanan'] ?? $l['waktu'] ?? $l['durasi'] ?? '1 Hari Kerja';
                 ?>
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="<?= $heading_id; ?>">
                             <button class="accordion-button <?= $no !== 1 ? 'collapsed' : ''; ?> fw-bold py-3" type="button" data-bs-toggle="collapse" data-bs-target="#<?= $collapse_id; ?>" aria-expanded="<?= $no === 1 ? 'true' : 'false'; ?>" aria-controls="<?= $collapse_id; ?>">
-                                <i class="fas fa-file-alt text-primary me-3 fs-5"></i> <?= $l['nama_layanan']; ?>
+                                <i class="fas fa-file-alt text-primary me-3 fs-5"></i> <?= $nama_layanan; ?>
                             </button>
                         </h2>
                         <div id="<?= $collapse_id; ?>" class="accordion-collapse collapse <?= $no === 1 ? 'show' : ''; ?>" aria-labelledby="<?= $heading_id; ?>" data-bs-parent="#accordionLayanan">
@@ -48,13 +60,13 @@ require_once __DIR__ . '/navbar.php';
                                     <div class="col-md-6">
                                         <div class="bg-white p-3 rounded-3 shadow-sm h-100">
                                             <h6 class="fw-bold text-primary mb-2"><i class="fas fa-list-check me-2"></i>Persyaratan</h6>
-                                            <p class="text-secondary small mb-0"><?= nl2br($l['persyaratan']); ?></p>
+                                            <p class="text-secondary small mb-0"><?= nl2br($persyaratan); ?></p>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="bg-white p-3 rounded-3 shadow-sm h-100">
                                             <h6 class="fw-bold text-success mb-2"><i class="fas fa-tasks me-2"></i>Prosedur</h6>
-                                            <p class="text-secondary small mb-0"><?= nl2br($l['prosedur']); ?></p>
+                                            <p class="text-secondary small mb-0"><?= nl2br($prosedur); ?></p>
                                         </div>
                                     </div>
                                     <div class="col-12">
@@ -62,7 +74,7 @@ require_once __DIR__ . '/navbar.php';
                                             <i class="far fa-clock text-warning fs-5"></i>
                                             <div>
                                                 <strong class="small d-block text-dark">Waktu Pelayanan / Selesai:</strong>
-                                                <span class="text-muted small"><?= $l['waktu_pelayanan']; ?></span>
+                                                <span class="text-muted small"><?= $waktu_pelayanan; ?></span>
                                             </div>
                                         </div>
                                     </div>
@@ -84,4 +96,4 @@ require_once __DIR__ . '/navbar.php';
     </div>
 </div>
 
-<?php require_once '../Public/footer.php'; ?>
+<?php require_once __DIR__ . '/footer.php'; ?>

@@ -1,14 +1,36 @@
 <?php
 $page_title = "Kontak Kami";
 
-// Naik 1 tingkat keluar folder Admin/, lalu masuk ke Public/
-require_once __DIR__ . '/header.php'; // Otomatis sudah ikut memanggil config.php
+// Load Header & Navbar
+require_once __DIR__ . '/header.php'; // Otomatis sudah memanggil config.php
 require_once __DIR__ . '/navbar.php';
-?>
 
 // Ambil data kontak dari database
 $query_kontak = mysqli_query($koneksi, "SELECT * FROM kontak LIMIT 1");
-$kontak = mysqli_fetch_assoc($query_kontak);
+$kontak       = ($query_kontak && mysqli_num_rows($query_kontak) > 0) ? mysqli_fetch_assoc($query_kontak) : [];
+
+// Proses simpan pesan masuk jika form dikirimkan
+$pesan_status = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_pesan'])) {
+    $nama   = mysqli_real_escape_string($koneksi, trim($_POST['nama']));
+    $email  = mysqli_real_escape_string($koneksi, trim($_POST['email']));
+    $pesan  = mysqli_real_escape_string($koneksi, trim($_POST['pesan']));
+    $tanggal = date('Y-m-d H:i:s');
+
+    $insert = mysqli_query($koneksi, "INSERT INTO pesan (nama, email, isi_pesan, tanggal) VALUES ('$nama', '$email', '$pesan', '$tanggal')");
+    
+    if ($insert) {
+        $pesan_status = '<div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                            <i class="fas fa-check-circle me-2"></i> Terima kasih! Pesan Anda telah berhasil dikirim.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                         </div>';
+    } else {
+        $pesan_status = '<div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i> Maaf, pesan gagal dikirim. Silakan coba lagi.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                         </div>';
+    }
+}
 ?>
 
 <style>
@@ -31,7 +53,11 @@ $kontak = mysqli_fetch_assoc($query_kontak);
         <div class="mx-auto bg-primary" style="height: 3px; width: 60px; border-radius: 2px;"></div>
     </div>
 
+    <!-- Menampilkan status pengiriman pesan -->
+    <?= $pesan_status; ?>
+
     <div class="row g-4 mb-5">
+        <!-- Panel Informasi Kontak -->
         <div class="col-lg-5">
             <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
                 <h4 class="fw-bold mb-4">Informasi Kontak</h4>
@@ -83,23 +109,24 @@ $kontak = mysqli_fetch_assoc($query_kontak);
             </div>
         </div>
 
+        <!-- Panel Form Kirim Pesan -->
         <div class="col-lg-7">
             <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
                 <h4 class="fw-bold mb-3">Kirim Pesan</h4>
-                <form action="" method="POST" onsubmit="alert('Pesan berhasil terkirim!'); return false;">
+                <form action="" method="POST">
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Nama Lengkap</label>
-                        <input type="text" class="form-control" placeholder="Masukkan nama Anda" required>
+                        <input type="text" name="nama" class="form-control" placeholder="Masukkan nama Anda" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Alamat Email</label>
-                        <input type="email" class="form-control" placeholder="contoh@email.com" required>
+                        <input type="email" name="email" class="form-control" placeholder="contoh@email.com" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold">Pesan / Masukan</label>
-                        <textarea class="form-control" rows="5" placeholder="Tuliskan pesan Anda di sini..." required></textarea>
+                        <textarea name="pesan" class="form-control" rows="5" placeholder="Tuliskan pesan Anda di sini..." required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary-custom w-100">
+                    <button type="submit" name="kirim_pesan" class="btn btn-primary w-100 py-2 rounded-3">
                         <i class="fas fa-paper-plane me-2"></i> Kirim Pesan
                     </button>
                 </form>
@@ -107,6 +134,7 @@ $kontak = mysqli_fetch_assoc($query_kontak);
         </div>
     </div>
 
+    <!-- Peta Google Maps -->
     <?php if (!empty($kontak['maps'])): ?>
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
             <div class="card-header bg-white border-0 py-3">
