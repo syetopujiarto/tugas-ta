@@ -7,11 +7,11 @@ $kontak_ft = $query_kontak_ft ? mysqli_fetch_assoc($query_kontak_ft) : [];
 ?>
 
 <style>
-    /* Palet Earthy Wood: Footer Coklat Kayu Solid Pekat */
-    .footer-earthy {
-        background-color: #3e2723 !important;
-        color: #f5f2eb;
-        border-top: 3px solid #8d6e63;
+    /* Gradient Profesional untuk Footer */
+    .footer-gradient {
+        background: linear-gradient(135deg, #1e293b, #1e3a8a) !important; 
+        color: #f8fafc;
+        border-top: 4px solid #3b82f6; /* Garis aksen cerah agar tidak monoton */
     }
 
     .footer-credit-badge {
@@ -21,17 +21,18 @@ $kontak_ft = $query_kontak_ft ? mysqli_fetch_assoc($query_kontak_ft) : [];
     }
 
     .footer-link-item {
-        color: #d7ccc8 !important;
-        transition: all 0.2s ease;
+        color: #cbd5e1 !important;
+        transition: all 0.3s ease;
     }
 
     .footer-link-item:hover {
         color: #ffffff !important;
-        padding-left: 4px;
+        padding-left: 8px;
+        text-shadow: 0 0 8px rgba(255,255,255,0.3);
     }
 </style>
 
-<footer class="footer-earthy pt-5 pb-4 mt-auto">
+<footer class="footer-gradient pt-5 pb-4 mt-auto">
     <div class="container">
         <div class="row g-4">
             <div class="col-lg-4 col-md-6">
@@ -42,10 +43,10 @@ $kontak_ft = $query_kontak_ft ? mysqli_fetch_assoc($query_kontak_ft) : [];
                          height="40" 
                          class="me-2 rounded-circle" 
                          style="object-fit: cover; min-width: 40px; min-height: 40px;"
-                         onerror="this.onerror=null; this.src='https://via.placeholder.com/40/8d6e63/ffffff?text=DP';">
+                         onerror="this.onerror=null; this.src='https://via.placeholder.com/40/3b82f6/ffffff?text=DP';">
                     <h5 class="fw-bold mb-0 text-white">Desa Pilang</h5>
                 </div>
-                <p class="small mb-3" style="color: #d7ccc8;">
+                <p class="small mb-3" style="color: #e2e8f0;">
                     Website resmi Pemerintah Desa Pilang, Kecamatan Wonoayu, Kabupaten Sidoarjo. Media informasi dan pelayanan publik bagi seluruh warga desa.
                 </p>
                 
@@ -82,7 +83,7 @@ $kontak_ft = $query_kontak_ft ? mysqli_fetch_assoc($query_kontak_ft) : [];
 
             <div class="col-lg-3 col-md-6">
                 <h6 class="fw-bold text-white mb-3">Kontak Kami</h6>
-                <ul class="list-unstyled small" style="color: #d7ccc8;">
+                <ul class="list-unstyled small" style="color: #e2e8f0;">
                     <li class="mb-2 d-flex align-items-start gap-2">
                         <i class="fas fa-map-marker-alt text-warning mt-1"></i>
                         <span><?= $kontak_ft['alamat'] ?? 'Kecamatan Wonoayu, Kabupaten Sidoarjo'; ?></span>
@@ -100,9 +101,9 @@ $kontak_ft = $query_kontak_ft ? mysqli_fetch_assoc($query_kontak_ft) : [];
 
             <div class="col-lg-3 col-md-6">
                 <h6 class="fw-bold text-white mb-3">Pelayanan Kantor</h6>
-                <p class="small mb-1" style="color: #d7ccc8;"><i class="far fa-clock me-1 text-warning"></i> Senin - Kamis: 08.00 - 15.00 WIB</p>
-                <p class="small mb-3" style="color: #d7ccc8;"><i class="far fa-clock me-1 text-warning"></i> Jumat: 08.00 - 11.30 WIB</p>
-                <span class="badge px-3 py-2 rounded-pill" style="background-color: #5d4037; color: #fff;">
+                <p class="small mb-1" style="color: #e2e8f0;"><i class="far fa-clock me-1 text-warning"></i> Senin - Kamis: 08.00 - 15.00 WIB</p>
+                <p class="small mb-3" style="color: #e2e8f0;"><i class="far fa-clock me-1 text-warning"></i> Jumat: 08.00 - 11.30 WIB</p>
+                <span class="badge px-3 py-2 rounded-pill" style="background-color: #3b82f6; color: #fff;">
                     <i class="fas fa-circle me-1 small text-warning"></i> Pelayanan Aktif
                 </span>
             </div>
@@ -112,7 +113,7 @@ $kontak_ft = $query_kontak_ft ? mysqli_fetch_assoc($query_kontak_ft) : [];
 
         <div class="row align-items-center">
             <div class="col-md-12 text-center">
-                <p class="small mb-0" style="color: #bcaaa4;">
+                <p class="small mb-0" style="color: #cbd5e1;">
                     &copy; 2026 Pemerintah Desa Pilang. All Rights Reserved.
                 </p>
             </div>

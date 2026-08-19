@@ -55,7 +55,7 @@ $chart_data   = [12, 19, 15, 25, 22, 30, $total_pengunjung];
             <img src="../assets/images/logo.png" height="35" alt="Logo" onerror="this.src='https://via.placeholder.com/35'">
             <div>
                 <h6 class="fw-bold mb-0 text-white">Admin Pilang</h6>
-                <small class="text-muted" style="font-size: 0.75rem;">Sistem Informasi Desa</small>
+                <small class="text-white" style="font-size: 0.75rem;">Sistem Informasi Desa</small>
             </div>
         </div>
         <nav>

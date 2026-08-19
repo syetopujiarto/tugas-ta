@@ -27,21 +27,6 @@
         background-color: rgba(121, 85, 72, 0.12);
     }
 
-    /* Tombol Admin - Warna Emas Padi / Aksen Kayu Hangat */
-    .btn-login-admin {
-        background-color: #d97706 !important;
-        color: #ffffff !important;
-        font-weight: 600;
-        border-radius: 6px;
-        padding: 0.4rem 1.1rem !important;
-        margin-left: 0.5rem;
-        transition: all 0.2s ease;
-    }
-
-    .btn-login-admin:hover {
-        background-color: #b45309 !important;
-    }
-
     .navbar-desa .navbar-toggler {
         border-color: #8d6e63;
     }
@@ -81,11 +66,6 @@
                 <li class="nav-item"><a class="nav-link" href="<?= BASE_URL; ?>/Public/fasilitas.php">Fasilitas</a></li>
                 <li class="nav-item"><a class="nav-link" href="<?= BASE_URL; ?>/Public/agenda.php">Agenda</a></li>
                 <li class="nav-item"><a class="nav-link" href="<?= BASE_URL; ?>/Public/kontak.php">Kontak</a></li>
-                <li class="nav-item mt-2 mt-lg-0">
-                    <a class="nav-link btn-login-admin text-center" href="<?= BASE_URL; ?>/Admin/login.php">
-                        <i class="fas fa-user-lock me-1"></i> Admin
-                    </a>
-                </li>
             </ul>
         </div>
 
